@@ -1,13 +1,9 @@
 ---
 
-  - name: Stop mysql service
-    systemd:
-      name: mysql
-      state: stopped
-
   - name: Add percona apt repository
     apt:
       deb: https://repo.percona.com/apt/percona-release_latest.generic_all.deb
+      update_cache: yes
 
   - name: Install percona packages
     apt:
@@ -15,5 +11,58 @@
         - percona-xtradb-cluster-client-5.7
         - percona-xtradb-cluster-server-5.7
         - percona-xtradb-cluster-57
+        - pmm2-client
       update_cache: yes
+
+  - name: Stop mysql service
+    systemd:
+      name: mysql
+      state: stopped
+
+  - name: Disable mysql apparmor profile
+    file:
+      src: /etc/apparmor.d/usr.sbin.mysqld
+      dest: /etc/apparmor.d/disable/usr.sbin.mysqld
+      owner: root
+      group: root
+      state: link
+      force: yes
+      follow: no
+
+  - name: Copy SSL CA certificate
+    copy:
+      src: files/ca.pem
+      dest: /var/lib/mysql/ca.pem
+      force: yes
+      owner: mysql
+      group: mysql
+      mode: preserve
+
+  - name: Copy SSL server-cert certificate
+    copy:
+      src: files/server-cert.pem
+      dest: /var/lib/mysql/server-cert.pem
+      force: yes
+      owner: mysql
+      group: mysql
+      mode: preserve
+
+  - name: Copy SSL server-key certificate
+    copy:
+      src: files/server-key.pem
+      dest: /var/lib/mysql/server-key.pem
+      force: yes
+      owner: mysql
+      group: mysql
+      mode: preserve
+
+  - name: Copy write-set replication config
+    copy:
+      src: files/wsrep.cnf
+      dest: /etc/mysql/percona-xtradb-cluster.conf.d/wsrep.cnf
+      force: yes
+      owner: root
+      group: root
+      mode: preserve
+
 ...
