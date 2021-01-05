@@ -1,0 +1,19 @@
+---
+
+  - name: Stop mysql service
+    systemd:
+      name: mysql
+      state: stopped
+
+  - name: Add percona apt repository
+    apt:
+      deb: https://repo.percona.com/apt/percona-release_latest.generic_all.deb
+
+  - name: Install percona packages
+    apt:
+      pkg:
+        - percona-xtradb-cluster-client-5.7
+        - percona-xtradb-cluster-server-5.7
+        - percona-xtradb-cluster-57
+      update_cache: yes
+...

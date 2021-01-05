@@ -1,0 +1,11 @@
+---
+# tasks file for percona
+
+- name: Debian mysql installation
+  import_tasks: pxc_debian.yml
+  when: ansible_distribution == "Debian"
+
+- name: Ubuntu mysql installation
+  import_tasks: pxc_ubuntu.yml
+  when: ansible_distribution == "Ubuntu"
+
