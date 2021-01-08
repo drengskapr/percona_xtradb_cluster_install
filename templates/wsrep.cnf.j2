@@ -39,4 +39,5 @@ pxc_strict_mode=ENFORCING
 wsrep_sst_method=xtrabackup-v2
 
 #Authentication for SST method
-wsrep_sst_auth="sstuser:percona"
+wsrep_sst_auth="{{ pxc_sst_user }}:{{ pxc_sst_password }}"
+
