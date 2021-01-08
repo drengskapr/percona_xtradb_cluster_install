@@ -14,6 +14,17 @@
         - pmm2-client
       update_cache: yes
 
+  - name: Start mysql service
+    systemd:
+      name: mysql
+      state: started
+
+  - name: Update mysql root password
+    shell: >
+      mysql -u root -NBe
+      'ALTER USER "root"@"localhost"
+      IDENTIFIED WITH mysql_native_password BY "{{ mysql_root_password }}"; FLUSH PRIVILEGES;'
+
   - name: Stop mysql service
     systemd:
       name: mysql
@@ -47,12 +58,12 @@
       mode: preserve
 
   - name: Copy write-set replication config
-    copy:
-      src: files/wsrep.cnf
+    template:
+      src: templates/wsrep.cnf.j2
       dest: /etc/mysql/percona-xtradb-cluster.conf.d/wsrep.cnf
       force: yes
       owner: root
       group: root
-      mode: preserve
+      mode: '0664'
 
 ...
