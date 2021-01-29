@@ -5,12 +5,15 @@
       deb: https://repo.percona.com/apt/percona-release_latest.generic_all.deb
       update_cache: yes
 
+  - name: Enable pxc80 release
+    command: percona-release enable pxc80
+
   - name: Install percona packages
     apt:
       pkg:
-        - percona-xtradb-cluster-client-5.7
-        - percona-xtradb-cluster-server-5.7
-        - percona-xtradb-cluster-57
+        - percona-xtradb-cluster-client
+        - percona-xtradb-cluster-server
+        - percona-xtradb-cluster
         - pmm2-client
       update_cache: yes
 
