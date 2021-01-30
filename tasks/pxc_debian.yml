@@ -15,6 +15,7 @@
         - percona-xtradb-cluster-server
         - percona-xtradb-cluster
         - pmm2-client
+        - vim
       update_cache: yes
 
   - name: Start mysql service
