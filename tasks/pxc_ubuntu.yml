@@ -5,12 +5,15 @@
       deb: https://repo.percona.com/apt/percona-release_latest.generic_all.deb
       update_cache: yes
 
+  - name: Enable pxc80 release
+    command: percona-release enable pxc-80
+
   - name: Install percona packages
     apt:
       pkg:
-        - percona-xtradb-cluster-client-5.7
-        - percona-xtradb-cluster-server-5.7
-        - percona-xtradb-cluster-57
+        - percona-xtradb-cluster-client
+        - percona-xtradb-cluster-server
+        - percona-xtradb-cluster
         - pmm2-client
       update_cache: yes
 
@@ -37,16 +40,6 @@
     systemd:
       name: mysql
       state: stopped
-
-  - name: Disable mysql apparmor profile
-    file:
-      src: /etc/apparmor.d/usr.sbin.mysqld
-      dest: /etc/apparmor.d/disable/usr.sbin.mysqld
-      owner: root
-      group: root
-      state: link
-      force: yes
-      follow: no
 
   - name: Copy SSL CA certificate
     copy:
@@ -76,9 +69,9 @@
       mode: preserve
 
   - name: Copy write-set replication config
-    template:
-      src: templates/wsrep.cnf.j2
-      dest: /etc/mysql/percona-xtradb-cluster.conf.d/wsrep.cnf
+    copy:
+      src: files/mysqld.cnf
+      dest: /etc/mysql/mysql.conf.d/mysqld.cnf
       force: yes
       owner: root
       group: root

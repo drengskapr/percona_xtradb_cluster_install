@@ -6,7 +6,7 @@
       update_cache: yes
 
   - name: Enable pxc80 release
-    command: percona-release enable pxc80
+    command: percona-release enable pxc-80
 
   - name: Install percona packages
     apt:
@@ -69,9 +69,9 @@
       mode: preserve
 
   - name: Copy write-set replication config
-    template:
-      src: templates/wsrep.cnf.j2
-      dest: /etc/mysql/percona-xtradb-cluster.conf.d/wsrep.cnf
+    copy:
+      src: files/mysqld.cnf
+      dest: /etc/mysql/mysql.conf.d/mysqld.cnf
       force: yes
       owner: root
       group: root

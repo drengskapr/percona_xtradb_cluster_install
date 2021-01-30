@@ -1,9 +1,22 @@
-[mysqld]
-# Path to Galera library
-wsrep_provider=/usr/lib/galera3/libgalera_smm.so
+# Template my.cnf for PXC
+# Edit to your requirements.
+[client]
+socket=/var/run/mysqld/mysqld.sock
 
-# Enable encryption for replication traffic
-pxc-encrypt-cluster-traffic=ON
+[mysqld]
+server-id=1
+datadir=/var/lib/mysql
+socket=/var/run/mysqld/mysqld.sock
+log-error=/var/log/mysql/error.log
+pid-file=/var/run/mysqld/mysqld.pid
+wsrep_provider_options=”socket.ssl_key=server-key.pem;socket.ssl_cert=server-cert.pem;socket.ssl_ca=ca.pem”
+
+# Binary log expiration period is 604800 seconds, which equals 7 days
+binlog_expire_logs_seconds=604800
+
+######## wsrep ###############
+# Path to Galera library
+wsrep_provider=/usr/lib/galera4/libgalera_smm.so
 
 # Cluster connection URL contains IPs of nodes
 #If no IP is found, this implies that a new cluster needs to be created,
@@ -13,11 +26,10 @@ wsrep_cluster_address=gcomm://
 # In order for Galera to work correctly binlog format should be ROW
 binlog_format=ROW
 
-# MyISAM storage engine has only experimental support
-default_storage_engine=InnoDB
-
 # Slave thread to use
-wsrep_slave_threads= 64
+wsrep_slave_threads=8
+
+wsrep_max_ws_size=50M
 
 wsrep_log_conflicts
 
@@ -26,11 +38,12 @@ innodb_autoinc_lock_mode=2
 
 # Node IP address
 wsrep_node_address=
+
 # Cluster name
-wsrep_cluster_name=pxc-cluster
+wsrep_cluster_name=pxc
 
 #If wsrep_node_name is not specified,  then system hostname will be used
-#wsrep_node_name=pxc-0
+wsrep_node_name=
 
 #pxc_strict_mode allowed values: DISABLED,PERMISSIVE,ENFORCING,MASTER
 pxc_strict_mode=ENFORCING
@@ -38,6 +51,8 @@ pxc_strict_mode=ENFORCING
 # SST method
 wsrep_sst_method=xtrabackup-v2
 
-#Authentication for SST method
-wsrep_sst_auth="{{ pxc_sst_user }}:{{ pxc_sst_password }}"
-
+[sst]
+encrypt=4
+ssl-key=server-key.pem
+ssl-ca=ca.pem
+ssl-cert=server-cert.pem
